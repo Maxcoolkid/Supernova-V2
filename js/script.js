@@ -1,6 +1,9 @@
+let isSnowing = true; // To keep track of snowfall state
+let snowContainer;
+
 // Snowfall Effect
-document.addEventListener('DOMContentLoaded', () => {
-    const snowContainer = document.createElement('div');
+function startSnowfall() {
+    snowContainer = document.createElement('div');
     snowContainer.style.position = 'fixed';
     snowContainer.style.top = '0';
     snowContainer.style.left = '0';
@@ -10,19 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     snowContainer.style.zIndex = '9999';
     document.body.appendChild(snowContainer);
 
-    // Determine snowflake settings based on screen size
-    const isMobile = window.innerWidth <= 768;
-    const snowflakeCount = isMobile ? 50 : 100; // Fewer snowflakes on mobile
-
     function createSnowflake() {
+        if (!isSnowing) return; // Stop creating snowflakes when snow is toggled off
+
         const snowflake = document.createElement('div');
-        const size = isMobile ? 3 + Math.random() * 5 : 5 + Math.random() * 10; // Smaller snowflakes on mobile
+        const size = window.innerWidth <= 768 ? 3 + Math.random() * 5 : 5 + Math.random() * 10;
 
         snowflake.style.position = 'absolute';
         snowflake.style.top = '0';
         snowflake.style.left = `${Math.random() * 100}%`;
         snowflake.style.width = `${size}px`;
-        snowflake.style.height = snowflake.style.width;
+        snowflake.style.height = `${size}px`;
         snowflake.style.backgroundColor = 'white';
         snowflake.style.borderRadius = '50%';
         snowflake.style.opacity = Math.random();
@@ -35,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 10000);
     }
 
-    // Adjust snowflake creation rate for mobile
-    setInterval(createSnowflake, isMobile ? 200 : 100);
+    setInterval(createSnowflake, 150);
 
     const style = document.createElement('style');
     style.innerHTML = `
@@ -50,6 +50,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     `;
     document.head.appendChild(style);
+}
+
+// Toggle Snowfall
+document.getElementById('toggleSnowButton').addEventListener('click', () => {
+    isSnowing = !isSnowing;
+
+    if (isSnowing) {
+        startSnowfall();
+    } else {
+        snowContainer.remove();
+    }
+});
+
+// Start snowfall on page load
+document.addEventListener('DOMContentLoaded', () => {
+    startSnowfall();
 });
 
 // Fullscreen Game Loader
